@@ -20,7 +20,7 @@ const MapboxMap2 = () => {
       zoom: 14,
     });
 
-    // add click listener to map
+    // add click listener to map TESTAR ISSO NO CELULAR
     map.current.on("click", (event) => {      
       if(map.current.getLayer("circle")) {
         map.current.removeLayer("circle")
