@@ -1,4 +1,5 @@
 import MapboxMap from "../components/MapboxMap";
+import MapboxMap2 from "../components/MapboxMap2"
 import map from "@/styles/Mapa.module.css"
 
 const GeofencePage = () => {
@@ -8,7 +9,8 @@ const GeofencePage = () => {
     return (
         <div>
             <h1>Geofence</h1>
-            <MapboxMap center={center} radius={radius} />
+            {/* <MapboxMap center={center} radius={radius} /> */}
+            <MapboxMap2 />
         </div>
     );
 };
