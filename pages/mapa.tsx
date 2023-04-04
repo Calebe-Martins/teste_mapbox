@@ -1,5 +1,6 @@
-import MapboxMap from "../components/MapboxMap";
+import MapboxMap from "../components/MapboxMap1";
 import MapboxMap2 from "../components/MapboxMap2"
+import MapboxMapTeste from "../components/MapboxMapTeste"
 import map from "@/styles/Mapa.module.css"
 
 const GeofencePage = () => {
@@ -10,7 +11,9 @@ const GeofencePage = () => {
         <div>
             <h1>Geofence</h1>
             {/* <MapboxMap center={center} radius={radius} /> */}
-            <MapboxMap2 />
+            {/* <div className="map" style={{backgroundColor: "red", height: "100%", width: "100%"}}> */}
+                <MapboxMapTeste />
+            {/* </div> */}
         </div>
     );
 };
