@@ -9,7 +9,7 @@ const MapboxMapTeste = () => {
   const map = useRef(null);
   const [center, setCenter] = useState([-49.25, -16.68]); // coordenadas iniciais do mapa -49.24, -16.68
   const [radius, setRadius] = useState(100); // raio inicial do círculo
-  const [coords, setCoords] = useState([-49.244037227730075, -16.67816684432782])
+  const [coords, setCoords] = useState([-49.24000554783504, -16.676079365182005])
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -60,27 +60,9 @@ const MapboxMapTeste = () => {
       });
     });
 
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.getCurrentPosition(function(position) {
-    //     var latitude = position.coords.latitude;
-    //     var longitude = position.coords.longitude;
-    //     console.log("Latitude: " + latitude + " Longitude: " + longitude);
-    //   });
-    // } else {
-    //   console.log("Geolocalização não é suportada no seu navegador. Pau no seu cu.");
-    // }
-
-    // pega a localização atual do usuário
-    //lat:-16.67816684432782 - lng:-49.244037227730075
-    navigator.geolocation.getCurrentPosition(position => {
-      const { latitude, longitude } = position.coords;
-      console.log("Localização atual → lng: " + longitude + " → lat: " + latitude)
-    });
-
   }, []);
 
   return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
-  // return <div ref={mapContainer} className="map-container" />;
 };
 
 export default MapboxMapTeste;
