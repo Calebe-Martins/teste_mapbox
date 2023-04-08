@@ -59,6 +59,9 @@ const MapboxMap = () => {
           "fill-opacity": 0.5,
         },
       });
+
+      console.log("lat:" + lngLat.lat + " lng:" + lngLat.lng)
+
     });
 
     // add user location dot
@@ -71,9 +74,11 @@ const MapboxMap = () => {
           userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
             .setLngLat([longitude, latitude])
             .addTo(map.current);
+            console.log("lat: " + latitude + " lng:" + longitude)
         } else {
           // update user location dot
           userLocationDot.current.setLngLat([longitude, latitude]);
+          console.log("lat: " + latitude + " lng:" + longitude)
         }
 
         // set map center to user location
@@ -82,7 +87,7 @@ const MapboxMap = () => {
       (error) => {
         console.error(error);
       },
-      { enableHighAccuracy: true, maximumAge: 1000 }
+      { enableHighAccuracy: true, maximumAge: 0 }
     );
   }, []);
 
