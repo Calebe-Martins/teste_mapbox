@@ -6,15 +6,23 @@ import * as turf from "@turf/turf";
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
-const MapboxMap = () => {
+const MapboxMap = ({ id }) => {
+
+  console.log(id)
+  
   const mapContainer = useRef(null);
   const map = useRef(null);
   const userLocationDot = useRef(null);
   const [center, setCenter] = useState([-49.25, -16.68]); // coordenadas iniciais do mapa -49.24, -16.68
   const [radius, setRadius] = useState(100); // raio inicial do círculo
-  const [coords, setCoords] = useState([-49.24000554783504, -16.676079365182005]);
+  const [start, setStart] = useState([-49.24000240042355, -16.676058946542966]);
+  const [end, setend] = useState([-49.2467092280161, -16.677949457902557])
 
   useEffect(() => {
+    // calculate route between start and end points
+    const line = turf.lineString([start, end]);
+    const route = turf.lineChunk(line, 100, { units: "meters" }).features;
+
     if (map.current) return; // initialize map only once
 
     map.current = new mapboxgl.Map({
@@ -60,35 +68,58 @@ const MapboxMap = () => {
         },
       });
 
-      console.log("lat:" + lngLat.lat + " lng:" + lngLat.lng)
+      console.log("CIRCLE lat:" + lngLat.lat + " lng:" + lngLat.lng)
 
     });
 
     // add user location dot
     navigator.geolocation.watchPosition(
       (position) => {
-        const { longitude, latitude } = position.coords;
+        // const { longitude, latitude } = position.coords;
 
         if (!userLocationDot.current) {
           // create user location dot
+          //lat: -16.676058946542966 lng: -49.24000240042355
           userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
-            .setLngLat([longitude, latitude])
+            .setLngLat(start)
             .addTo(map.current);
-            console.log("lat: " + latitude + " lng:" + longitude)
+          // console.log("lat: " + latitude + " lng:" + longitude)
+
+          let i = 0;
+          console.log("teste")
+          const interval = setInterval(() => {
+            if (i >= route.length) {
+              clearInterval(interval);
+              return;
+            }
+
+            const coords = route[i].geometry.coordinates;
+            console.log(coords[0])
+            userLocationDot.current.setLngLat(coords[0]);
+            // setMarker((prevMarker) =>
+            //   prevMarker.setLngLat(coords).addTo(map.current)
+            // );
+
+            i++;
+          }, 1000);
+
+          // cleanup function
+          return () => clearInterval(interval);
+          
         } else {
           // update user location dot
-          userLocationDot.current.setLngLat([longitude, latitude]);
-          console.log("lat: " + latitude + " lng:" + longitude)
+          //userLocationDot.current.setLngLat([longitude, latitude]);
+          //console.log("lat: " + latitude + " lng:" + longitude)
         }
-
-        // set map center to user location
-        setCenter([longitude, latitude]);
+        // set map center to user location        
+        // map.current.setCenter(start);
       },
       (error) => {
         console.error(error);
       },
       { enableHighAccuracy: true, maximumAge: 0 }
     );
+
   }, []);
 
   return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
