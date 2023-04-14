@@ -3,12 +3,13 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
 // import "./MapboxMap.css";
+import circulo from "../components/functions/circle"
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
 const MapboxMap = ({ id }) => {
 
-  console.log(id)
+  //console.log(id)
   
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -68,6 +69,7 @@ const MapboxMap = ({ id }) => {
         },
       });
 
+      circulo.setCircle("DESGRAÇA")
       console.log("CIRCLE lat:" + lngLat.lat + " lng:" + lngLat.lng)
 
     });
@@ -85,8 +87,14 @@ const MapboxMap = ({ id }) => {
             .addTo(map.current);
           // console.log("lat: " + latitude + " lng:" + longitude)
 
+          // check if user location is inside geofencing circle
+          // const isInside = turf.booleanPointInPolygon(turf.point(lngLat), geofenceCircle);
+
+          // if (isInside) {
+          //   console.log("User location is inside geofencing circle!");
+          // }
+
           let i = 0;
-          console.log("teste")
           const interval = setInterval(() => {
             if (i >= route.length) {
               clearInterval(interval);
@@ -94,8 +102,8 @@ const MapboxMap = ({ id }) => {
             }
 
             const coords = route[i].geometry.coordinates;
-            console.log(coords[0])
-            userLocationDot.current.setLngLat(coords[0]);
+            // console.log(coords)
+            userLocationDot.current.setLngLat(coords[1]);
             // setMarker((prevMarker) =>
             //   prevMarker.setLngLat(coords).addTo(map.current)
             // );
@@ -112,7 +120,7 @@ const MapboxMap = ({ id }) => {
           //console.log("lat: " + latitude + " lng:" + longitude)
         }
         // set map center to user location        
-        // map.current.setCenter(start);
+        map.current.setCenter(start);
       },
       (error) => {
         console.error(error);
