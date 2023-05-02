@@ -1,7 +1,3 @@
-import MapboxMap from "../components/MapboxMap1";
-import MapboxMap2 from "../components/MapboxMap2"
-import MapboxMapTeste from "../components/MapboxMapTeste"
-import map from "@/styles/Mapa.module.css"
 import MapboxMapTesteDot from "../components/MapBoxMapTesteDot"
 import { useRouter } from 'next/router';
 

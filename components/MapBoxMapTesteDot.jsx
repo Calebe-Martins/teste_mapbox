@@ -2,15 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
-// import "./MapboxMap.css";
-import circulo from "../components/functions/circle"
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
 const MapboxMap = ({ id }) => {
 
-  //console.log(id)
-  
+  const idUser = useRef(id)
   const mapContainer = useRef(null);
   const map = useRef(null);
   const userLocationDot = useRef(null);
@@ -18,6 +15,8 @@ const MapboxMap = ({ id }) => {
   const [radius, setRadius] = useState(100); // raio inicial do círculo
   const [start, setStart] = useState([-49.24000240042355, -16.676058946542966]);
   const [end, setend] = useState([-49.2467092280161, -16.677949457902557])
+
+  idUser.current = id
 
   useEffect(() => {
     // calculate route between start and end points
@@ -33,11 +32,78 @@ const MapboxMap = ({ id }) => {
       zoom: 14,
     });
 
+    map.current.on("load", (e) => {
+      const savedLocation = JSON.parse(localStorage.getItem(`location-${idUser.current}`));
+      if (savedLocation != null && savedLocation.id == idUser.current) {
+        setCenter([savedLocation.lng, savedLocation.lat]);
+        setRadius(100);
+  
+        // create geofencing circle
+        const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
+          steps: 64,
+          units: "meters",
+        });
+        const geofence = {
+          type: "FeatureCollection",
+          features: [circle],
+        };
+  
+        map.current.addSource(`circle-${savedLocation.id}`, {
+          type: "geojson",
+          data: geofence,
+        });
+  
+        map.current.addLayer({
+          id: `circle-${savedLocation.id}`,
+          type: "fill",
+          source: `circle-${savedLocation.id}`,
+          paint: {
+            "fill-color": "#ff0000",
+            "fill-opacity": 0.5,
+          },
+        });
+      } else {
+
+        for (let key in localStorage) {
+          if (localStorage.hasOwnProperty(key) && key.startsWith('location')) {
+            const savedLocation = JSON.parse(localStorage.getItem(key));
+
+            // create geofencing circle
+            const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
+              steps: 64,
+              units: "meters",
+            });
+
+            const geofence = {
+              type: "FeatureCollection",
+              features: [circle],
+            };
+
+            map.current.addSource(`circle-${savedLocation.id}`, {
+              type: "geojson",
+              data: geofence,
+            });
+      
+            map.current.addLayer({
+              id: `circle-${savedLocation.id}`,
+              type: "fill",
+              source: `circle-${savedLocation.id}`,
+              paint: {
+                "fill-color": "#ff0000",
+                "fill-opacity": 0.5,
+              },
+            });
+          }
+        }        
+      }
+    });
+
     // add click listener to map
-    map.current.on("click", (event) => {      
-      if(map.current.getLayer("circle")) {
-        map.current.removeLayer("circle")
-        map.current.removeSource("circle")
+    map.current.on("click", (event) => {   
+      const layer = `circle-${idUser.current}`   
+      if(map.current.getLayer(layer)) {
+        map.current.removeLayer(layer)
+        map.current.removeSource(layer)
       }
       
       const lngLat = event.lngLat;
@@ -54,23 +120,22 @@ const MapboxMap = ({ id }) => {
         features: [circle],
       };
 
-      map.current.addSource("circle", {
+      map.current.addSource(`circle-${idUser.current}`, {
         type: "geojson",
         data: geofence,
       });
 
       map.current.addLayer({
-        id: "circle",
+        id: `circle-${idUser.current}`,
         type: "fill",
-        source: "circle",
+        source: `circle-${idUser.current}`,
         paint: {
           "fill-color": "#ff0000",
           "fill-opacity": 0.5,
         },
       });
 
-      circulo.setCircle("DESGRAÇA")
-      console.log("CIRCLE lat:" + lngLat.lat + " lng:" + lngLat.lng)
+      localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: idUser.current, lng: lngLat.lng, lat: lngLat.lat }));
 
     });
 
@@ -86,13 +151,6 @@ const MapboxMap = ({ id }) => {
             .setLngLat(start)
             .addTo(map.current);
           // console.log("lat: " + latitude + " lng:" + longitude)
-
-          // check if user location is inside geofencing circle
-          // const isInside = turf.booleanPointInPolygon(turf.point(lngLat), geofenceCircle);
-
-          // if (isInside) {
-          //   console.log("User location is inside geofencing circle!");
-          // }
 
           let i = 0;
           const interval = setInterval(() => {
@@ -118,9 +176,10 @@ const MapboxMap = ({ id }) => {
           // update user location dot
           //userLocationDot.current.setLngLat([longitude, latitude]);
           //console.log("lat: " + latitude + " lng:" + longitude)
+          // set map center to user location
+          // map.current.setCenter(start);
         }
-        // set map center to user location        
-        map.current.setCenter(start);
+        
       },
       (error) => {
         console.error(error);
