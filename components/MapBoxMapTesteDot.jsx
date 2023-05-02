@@ -99,44 +99,44 @@ const MapboxMap = ({ id }) => {
     });
 
     // add click listener to map
-    map.current.on("click", (event) => {   
-      const layer = `circle-${idUser.current}`   
-      if(map.current.getLayer(layer)) {
-        map.current.removeLayer(layer)
-        map.current.removeSource(layer)
+    map.current.on("click", (event) => {
+      if (idUser.current != null ) {
+        const layer = `circle-${idUser.current}`   
+        if(map.current.getLayer(layer)) {
+          map.current.removeLayer(layer)
+          map.current.removeSource(layer)
+        }
+        
+        const lngLat = event.lngLat;
+        setCenter([lngLat.lng, lngLat.lat]);
+        setRadius(100);
+
+        // create geofencing circle
+        const circle = turf.circle([lngLat.lng, lngLat.lat], radius, {
+          steps: 64,
+          units: "meters",
+        });
+        const geofence = {
+          type: "FeatureCollection",
+          features: [circle],
+        };
+
+        map.current.addSource(`circle-${idUser.current}`, {
+          type: "geojson",
+          data: geofence,
+        });
+
+        map.current.addLayer({
+          id: `circle-${idUser.current}`,
+          type: "fill",
+          source: `circle-${idUser.current}`,
+          paint: {
+            "fill-color": "#ff0000",
+            "fill-opacity": 0.5,
+          },
+        });
+        localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: idUser.current, lng: lngLat.lng, lat: lngLat.lat }));
       }
-      
-      const lngLat = event.lngLat;
-      setCenter([lngLat.lng, lngLat.lat]);
-      setRadius(100);
-
-      // create geofencing circle
-      const circle = turf.circle([lngLat.lng, lngLat.lat], radius, {
-        steps: 64,
-        units: "meters",
-      });
-      const geofence = {
-        type: "FeatureCollection",
-        features: [circle],
-      };
-
-      map.current.addSource(`circle-${idUser.current}`, {
-        type: "geojson",
-        data: geofence,
-      });
-
-      map.current.addLayer({
-        id: `circle-${idUser.current}`,
-        type: "fill",
-        source: `circle-${idUser.current}`,
-        paint: {
-          "fill-color": "#ff0000",
-          "fill-opacity": 0.5,
-        },
-      });
-
-      localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: idUser.current, lng: lngLat.lng, lat: lngLat.lat }));
-
     });
 
     // add user location dot
