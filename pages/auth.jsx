@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import supabase from "../components/functions/supabase"
 
 export default function auth() {
-
     const [activeTab, setActiveTab] = useState("login");
     const [error, setError] = useState("");
+    const router = useRouter()
 
     function handleTabClick(tab) {
         setActiveTab(tab);
@@ -32,8 +32,8 @@ export default function auth() {
             .then(({ data }) => {
                 if (data && data.length > 0) {
                     if (data[0].acesso) {
-                        // Credenciais corretas, usuário logado com sucesso
-                        setError("Usuario Logado");
+                        setError("Acessando. Aguarde")
+                        router.push(`/mapa?uid=${data[0].uid}`)
                     } else {
                         setError("Peça permissão de acesso")
                     }
