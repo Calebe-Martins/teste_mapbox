@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useRouter } from 'next/router'
 import supabase from "../components/functions/supabase"
 
-export default function auth() {
+export default function Auth() {
     const [activeTab, setActiveTab] = useState("login");
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
     const router = useRouter()
 
     function handleTabClick(tab) {
