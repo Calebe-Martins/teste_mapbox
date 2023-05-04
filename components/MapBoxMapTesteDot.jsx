@@ -7,7 +7,6 @@ mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZ
 
 const MapboxMap = ({ id }) => {
 
-  const idUser = useRef(id)
   const mapContainer = useRef(null);
   const map = useRef(null);
   const userLocationDot = useRef(null);
@@ -15,8 +14,6 @@ const MapboxMap = ({ id }) => {
   const [radius, setRadius] = useState(100); // raio inicial do círculo
   const [start, setStart] = useState([-49.24000240042355, -16.676058946542966]);
   const [end, setend] = useState([-49.2467092280161, -16.677949457902557])
-
-  idUser.current = id
 
   useEffect(() => {
     // calculate route between start and end points
@@ -32,111 +29,108 @@ const MapboxMap = ({ id }) => {
       zoom: 14,
     });
 
-    map.current.on("load", (e) => {
-      const savedLocation = JSON.parse(localStorage.getItem(`location-${idUser.current}`));
-      if (savedLocation != null && savedLocation.id == idUser.current) {
-        setCenter([savedLocation.lng, savedLocation.lat]);
-        setRadius(100);
+    // map.current.on("load", (e) => {
+    //   const savedLocation = JSON.parse(localStorage.getItem(`location-${idUser.current}`));
+    //   if (savedLocation != null && savedLocation.id == idUser.current) {
+    //     setCenter([savedLocation.lng, savedLocation.lat]);
+    //     setRadius(100);
   
-        // create geofencing circle
-        const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
-          steps: 64,
-          units: "meters",
-        });
-        const geofence = {
-          type: "FeatureCollection",
-          features: [circle],
-        };
+    //     // create geofencing circle
+    //     const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
+    //       steps: 64,
+    //       units: "meters",
+    //     });
+    //     const geofence = {
+    //       type: "FeatureCollection",
+    //       features: [circle],
+    //     };
   
-        map.current.addSource(`circle-${savedLocation.id}`, {
-          type: "geojson",
-          data: geofence,
-        });
+    //     map.current.addSource(`circle-${savedLocation.id}`, {
+    //       type: "geojson",
+    //       data: geofence,
+    //     });
   
-        map.current.addLayer({
-          id: `circle-${savedLocation.id}`,
-          type: "fill",
-          source: `circle-${savedLocation.id}`,
-          paint: {
-            "fill-color": "#ff0000",
-            "fill-opacity": 0.5,
-          },
-        });
-      } else {
+    //     map.current.addLayer({
+    //       id: `circle-${savedLocation.id}`,
+    //       type: "fill",
+    //       source: `circle-${savedLocation.id}`,
+    //       paint: {
+    //         "fill-color": "#ff0000",
+    //         "fill-opacity": 0.5,
+    //       },
+    //     });
+    //   } else {
 
-        for (let key in localStorage) {
-          if (localStorage.hasOwnProperty(key) && key.startsWith('location')) {
-            const savedLocation = JSON.parse(localStorage.getItem(key));
+    //     for (let key in localStorage) {
+    //       if (localStorage.hasOwnProperty(key) && key.startsWith('location')) {
+    //         const savedLocation = JSON.parse(localStorage.getItem(key));
 
-            // create geofencing circle
-            const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
-              steps: 64,
-              units: "meters",
-            });
+    //         // create geofencing circle
+    //         const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
+    //           steps: 64,
+    //           units: "meters",
+    //         });
 
-            const geofence = {
-              type: "FeatureCollection",
-              features: [circle],
-            };
+    //         const geofence = {
+    //           type: "FeatureCollection",
+    //           features: [circle],
+    //         };
 
-            map.current.addSource(`circle-${savedLocation.id}`, {
-              type: "geojson",
-              data: geofence,
-            });
+    //         map.current.addSource(`circle-${savedLocation.id}`, {
+    //           type: "geojson",
+    //           data: geofence,
+    //         });
       
-            map.current.addLayer({
-              id: `circle-${savedLocation.id}`,
-              type: "fill",
-              source: `circle-${savedLocation.id}`,
-              paint: {
-                "fill-color": "#ff0000",
-                "fill-opacity": 0.5,
-              },
-            });
-          }
-        }        
-      }
-    });
+    //         map.current.addLayer({
+    //           id: `circle-${savedLocation.id}`,
+    //           type: "fill",
+    //           source: `circle-${savedLocation.id}`,
+    //           paint: {
+    //             "fill-color": "#ff0000",
+    //             "fill-opacity": 0.5,
+    //           },
+    //         });
+    //       }
+    //     }        
+    //   }
+    // });
 
     // add click listener to map
     map.current.on("click", (event) => {
-      if (idUser.current != null ) {
-        const layer = `circle-${idUser.current}`   
-        if(map.current.getLayer(layer)) {
-          map.current.removeLayer(layer)
-          map.current.removeSource(layer)
-        }
-        
-        const lngLat = event.lngLat;
-        setCenter([lngLat.lng, lngLat.lat]);
-        setRadius(100);
-
-        // create geofencing circle
-        const circle = turf.circle([lngLat.lng, lngLat.lat], radius, {
-          steps: 64,
-          units: "meters",
-        });
-        const geofence = {
-          type: "FeatureCollection",
-          features: [circle],
-        };
-
-        map.current.addSource(`circle-${idUser.current}`, {
-          type: "geojson",
-          data: geofence,
-        });
-
-        map.current.addLayer({
-          id: `circle-${idUser.current}`,
-          type: "fill",
-          source: `circle-${idUser.current}`,
-          paint: {
-            "fill-color": "#ff0000",
-            "fill-opacity": 0.5,
-          },
-        });
-        localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: idUser.current, lng: lngLat.lng, lat: lngLat.lat }));
+      if(map.current.getLayer("circle")) {
+        map.current.removeLayer("circle")
+        map.current.removeSource("circle")
       }
+      
+      const lngLat = event.lngLat;
+      setCenter([lngLat.lng, lngLat.lat]);
+      setRadius(100);
+
+      // create geofencing circle
+      const circle = turf.circle([lngLat.lng, lngLat.lat], radius, {
+        steps: 64,
+        units: "meters",
+      });
+      const geofence = {
+        type: "FeatureCollection",
+        features: [circle],
+      };
+
+      map.current.addSource(`circle-${id}`, {
+        type: "geojson",
+        data: geofence,
+      });
+
+      map.current.addLayer({
+        id: `circle-${id}`,
+        type: "fill",
+        source: `circle-${id}`,
+        paint: {
+          "fill-color": "#ff0000",
+          "fill-opacity": 0.5,
+        },
+      });
+      // localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: id, lng: lngLat.lng, lat: lngLat.lat }));
     });
 
     // add user location dot
