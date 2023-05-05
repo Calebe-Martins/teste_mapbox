@@ -1,14 +1,12 @@
 import MapboxMapTesteDot from "../components/MapBoxMapTesteDot"
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-const GeofencePage = () => {
+const mapa = () => {
     const router = useRouter();
-    const { id } = router.query;
+    const { uid } = router.query;
 
     const center = { lng: -122.33, lat: 47.6 };
     const radius = 100;
-
-    console.log(id)
 
     return (
         <div>
@@ -17,9 +15,9 @@ const GeofencePage = () => {
             {/* <div className="map" style={{backgroundColor: "red", height: "100%", width: "100%"}}> */}
                 {/* <MapboxMapTeste /> */}
             {/* </div> */}
-            <MapboxMapTesteDot id={id}/>
+            <MapboxMapTesteDot uid={uid} />
         </div>
     );
 };
 
-export default GeofencePage;
+export default mapa;

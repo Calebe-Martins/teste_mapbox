@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
+import supabase from "../components/functions/supabase"
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
-const MapboxMap = ({ id }) => {
+const MapboxMap = ({uid}) => {
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -14,6 +15,9 @@ const MapboxMap = ({ id }) => {
   const [radius, setRadius] = useState(100); // raio inicial do círculo
   const [start, setStart] = useState([-49.24000240042355, -16.676058946542966]);
   const [end, setend] = useState([-49.2467092280161, -16.677949457902557])
+
+  const uuid = useRef(uid)
+  uuid.current = uid
 
   useEffect(() => {
     // calculate route between start and end points
@@ -29,77 +33,57 @@ const MapboxMap = ({ id }) => {
       zoom: 14,
     });
 
-    // map.current.on("load", (e) => {
-    //   const savedLocation = JSON.parse(localStorage.getItem(`location-${idUser.current}`));
-    //   if (savedLocation != null && savedLocation.id == idUser.current) {
-    //     setCenter([savedLocation.lng, savedLocation.lat]);
-    //     setRadius(100);
+    
+    const getData = async () => {
+      // Verifica se já existe uma linha com a uid desejada
+      const { data, error } = await supabase.from('geofences').select('*').eq('uid', uuid.current);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setCenter([data[0].lng, data[0].lat]);
+        setRadius(100);
   
-    //     // create geofencing circle
-    //     const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
-    //       steps: 64,
-    //       units: "meters",
-    //     });
-    //     const geofence = {
-    //       type: "FeatureCollection",
-    //       features: [circle],
-    //     };
+        // create geofencing circle
+        const circle = turf.circle([data[0].lng, data[0].lat], radius, {
+          steps: 64,
+          units: "meters",
+        });
+        const geofence = {
+          type: "FeatureCollection",
+          features: [circle],
+        };
   
-    //     map.current.addSource(`circle-${savedLocation.id}`, {
-    //       type: "geojson",
-    //       data: geofence,
-    //     });
+        map.current.addSource(`circle-${data[0].uid}`, {
+          type: "geojson",
+          data: geofence,
+        });
   
-    //     map.current.addLayer({
-    //       id: `circle-${savedLocation.id}`,
-    //       type: "fill",
-    //       source: `circle-${savedLocation.id}`,
-    //       paint: {
-    //         "fill-color": "#ff0000",
-    //         "fill-opacity": 0.5,
-    //       },
-    //     });
-    //   } else {
+        map.current.addLayer({
+          id: `circle-${data[0].uid}`,
+          type: "fill",
+          source: `circle-${data[0].uid}`,
+          paint: {
+            "fill-color": "#ff0000",
+            "fill-opacity": 0.5,
+          },
+        });
+      }
+    }
 
-    //     for (let key in localStorage) {
-    //       if (localStorage.hasOwnProperty(key) && key.startsWith('location')) {
-    //         const savedLocation = JSON.parse(localStorage.getItem(key));
 
-    //         // create geofencing circle
-    //         const circle = turf.circle([savedLocation.lng, savedLocation.lat], radius, {
-    //           steps: 64,
-    //           units: "meters",
-    //         });
-
-    //         const geofence = {
-    //           type: "FeatureCollection",
-    //           features: [circle],
-    //         };
-
-    //         map.current.addSource(`circle-${savedLocation.id}`, {
-    //           type: "geojson",
-    //           data: geofence,
-    //         });
-      
-    //         map.current.addLayer({
-    //           id: `circle-${savedLocation.id}`,
-    //           type: "fill",
-    //           source: `circle-${savedLocation.id}`,
-    //           paint: {
-    //             "fill-color": "#ff0000",
-    //             "fill-opacity": 0.5,
-    //           },
-    //         });
-    //       }
-    //     }        
-    //   }
-    // });
+    map.current.on("load", (e) => {
+      getData()
+    });
 
     // add click listener to map
     map.current.on("click", (event) => {
-      if(map.current.getLayer("circle")) {
-        map.current.removeLayer("circle")
-        map.current.removeSource("circle")
+      if(map.current.getLayer(`circle-${uuid.current}`)) {
+        map.current.removeLayer(`circle-${uuid.current}`)
+        map.current.removeSource(`circle-${uuid.current}`)
       }
       
       const lngLat = event.lngLat;
@@ -116,22 +100,55 @@ const MapboxMap = ({ id }) => {
         features: [circle],
       };
 
-      map.current.addSource(`circle-${id}`, {
+      map.current.addSource(`circle-${uuid.current}`, {
         type: "geojson",
         data: geofence,
       });
 
       map.current.addLayer({
-        id: `circle-${id}`,
+        id: `circle-${uuid.current}`,
         type: "fill",
-        source: `circle-${id}`,
+        source: `circle-${uuid.current}`,
         paint: {
           "fill-color": "#ff0000",
           "fill-opacity": 0.5,
         },
       });
-      // localStorage.setItem(`location-${idUser.current}`, JSON.stringify({ id: id, lng: lngLat.lng, lat: lngLat.lat }));
+
+      fetchData(uuid.current, lngLat.lat, lngLat.lng)
     });
+
+    const fetchData = async (id, lat, lng) => {
+      // Verifica se já existe uma linha com a uid desejada
+      const { data, error } = await supabase.from('geofences').select('*').eq('uid', id);
+    
+      if (error) {
+        console.error(error);
+        return;
+      }
+    
+      if (data && data.length > 0) {
+        // Atualiza as colunas lat e lng da linha existente
+        const { error } = await supabase.from('geofences').update({ lat: lat, lng: lng }).eq('uid', id);
+    
+        if (error) {
+          console.error(error);
+          return;
+        }
+    
+        console.log('Atualizado com sucesso!');
+      } else {
+        // Insere uma nova linha com as informações
+        const { error } = await supabase.from('geofences').insert({ uid: id, lat: lat, lng: lng });
+    
+        if (error) {
+          console.error(error);
+          return;
+        }
+    
+        console.log('Inserido com sucesso!');
+      }
+    }
 
     // add user location dot
     navigator.geolocation.watchPosition(
