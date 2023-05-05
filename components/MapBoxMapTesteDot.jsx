@@ -198,7 +198,7 @@ const MapboxMap = ({uid}) => {
       { enableHighAccuracy: true, maximumAge: 0 }
     );
 
-  }, []);
+  }, [center, radius, start, end]);
 
   return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
 };
