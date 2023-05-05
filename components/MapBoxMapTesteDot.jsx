@@ -151,52 +151,52 @@ const MapboxMap = ({uid}) => {
     }
 
     // add user location dot
-    navigator.geolocation.watchPosition(
-      (position) => {
-        // const { longitude, latitude } = position.coords;
+    // navigator.geolocation.watchPosition(
+    //   (position) => {
+    //     // const { longitude, latitude } = position.coords;
 
-        if (!userLocationDot.current) {
-          // create user location dot
-          //lat: -16.676058946542966 lng: -49.24000240042355
-          userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
-            .setLngLat(start)
-            .addTo(map.current);
-          // console.log("lat: " + latitude + " lng:" + longitude)
+    //     if (!userLocationDot.current) {
+    //       // create user location dot
+    //       //lat: -16.676058946542966 lng: -49.24000240042355
+    //       userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
+    //         .setLngLat(start)
+    //         .addTo(map.current);
+    //       // console.log("lat: " + latitude + " lng:" + longitude)
 
-          let i = 0;
-          const interval = setInterval(() => {
-            if (i >= route.length) {
-              clearInterval(interval);
-              return;
-            }
+    //       let i = 0;
+    //       const interval = setInterval(() => {
+    //         if (i >= route.length) {
+    //           clearInterval(interval);
+    //           return;
+    //         }
 
-            const coords = route[i].geometry.coordinates;
-            // console.log(coords)
-            userLocationDot.current.setLngLat(coords[1]);
-            // setMarker((prevMarker) =>
-            //   prevMarker.setLngLat(coords).addTo(map.current)
-            // );
+    //         const coords = route[i].geometry.coordinates;
+    //         // console.log(coords)
+    //         userLocationDot.current.setLngLat(coords[1]);
+    //         // setMarker((prevMarker) =>
+    //         //   prevMarker.setLngLat(coords).addTo(map.current)
+    //         // );
 
-            i++;
-          }, 1000);
+    //         i++;
+    //       }, 1000);
 
-          // cleanup function
-          return () => clearInterval(interval);
+    //       // cleanup function
+    //       return () => clearInterval(interval);
           
-        } else {
-          // update user location dot
-          //userLocationDot.current.setLngLat([longitude, latitude]);
-          //console.log("lat: " + latitude + " lng:" + longitude)
-          // set map center to user location
-          // map.current.setCenter(start);
-        }
+    //     } else {
+    //       // update user location dot
+    //       //userLocationDot.current.setLngLat([longitude, latitude]);
+    //       //console.log("lat: " + latitude + " lng:" + longitude)
+    //       // set map center to user location
+    //       // map.current.setCenter(start);
+    //     }
         
-      },
-      (error) => {
-        console.error(error);
-      },
-      { enableHighAccuracy: true, maximumAge: 0 }
-    );
+    //   },
+    //   (error) => {
+    //     console.error(error);
+    //   },
+    //   { enableHighAccuracy: true, maximumAge: 0 }
+    // );
 
   }, [center, radius, start, end]);
 

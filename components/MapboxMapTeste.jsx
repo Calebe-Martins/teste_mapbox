@@ -22,10 +22,12 @@ const MapboxMapTeste = () => {
     });
 
     const fetchData = async () => {
-
+      // Carregar todos os geofences
     }
 
-  }, []);
+    // Quando o usuario passar dentro do geofence tem que ativar a notificação
+
+  }, [center, radius]);
 
   return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
 };
