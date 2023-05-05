@@ -1,12 +1,11 @@
-import MapboxMapTeste from "../components/MapboxMapTeste";
-import MapboxMapTesteDot from "../components/MapboxMapTeste"
+import MapboxMapTeste2 from "../components/MapboxMapTeste2";
 
 const user = () => {
 
     return (
         <div>
             <h1>Mostra a promoção</h1>
-            <MapboxMapTeste />
+            <MapboxMapTeste2 />
         </div>
     );
 };
