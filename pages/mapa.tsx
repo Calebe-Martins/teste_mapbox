@@ -1,7 +1,7 @@
 import MapboxMapTesteDot from "../components/MapBoxMapTesteDot"
 import { useRouter } from "next/router";
 
-const mapa = () => {
+const Mapa = () => {
     const router = useRouter();
     const { uid } = router.query;
 
@@ -20,4 +20,4 @@ const mapa = () => {
     );
 };
 
-export default mapa;
+export default Mapa;
