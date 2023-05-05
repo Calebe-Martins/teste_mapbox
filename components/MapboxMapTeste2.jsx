@@ -119,7 +119,6 @@ const MapboxMap = () => {
                     
                     const coords = route[i].geometry.coordinates;
                     getInside(coords)
-                    // console.log(coords)
                     userLocationDot.current.setLngLat(coords[1]);
                     // setMarker((prevMarker) =>
                     //   prevMarker.setLngLat(coords).addTo(map.current)
@@ -137,6 +136,8 @@ const MapboxMap = () => {
             //console.log("lat: " + latitude + " lng:" + longitude)
             // set map center to user location
             // map.current.setCenter(start);
+
+            // QUANDO O CARA ANDAR VERIFICAR SE JÁ PASSOU O TEMPO
           }
           
         },
