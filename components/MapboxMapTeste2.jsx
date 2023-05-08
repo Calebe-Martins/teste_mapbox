@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
+import supabase from "../components/functions/supabase"
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
-import supabase from "../components/functions/supabase"
-import { get } from "http";
+import mapboxgl from "mapbox-gl";
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
@@ -91,7 +90,7 @@ const MapboxMap = () => {
             if (turf.booleanPointInPolygon(userLocation, circle)) {
                 console.log(`Usuario entrou na geofence uid: ${geofence.uid}`);
 
-                
+                // Colocar no local storage aqui
 
             }
         }
@@ -106,9 +105,9 @@ const MapboxMap = () => {
             if (!userLocationDot.current) {
                 // create user location dot
                 userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
-                    .setLngLat(start)
-                    .addTo(map.current);
-                // console.log("lat: " + latitude + " lng:" + longitude)
+                .setLngLat(start)
+                .addTo(map.current);
+
 
                 let i = 0;
                 const interval = setInterval(() => {
@@ -133,7 +132,6 @@ const MapboxMap = () => {
             } else {
             // update user location dot
             //userLocationDot.current.setLngLat([longitude, latitude]);
-            //console.log("lat: " + latitude + " lng:" + longitude)
             // set map center to user location
             // map.current.setCenter(start);
 
@@ -152,7 +150,7 @@ const MapboxMap = () => {
 
   }, []);
 
-  return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
+  return <div ref={mapContainer} style={{ height: '100vh', width: '50vw'}} className="map-container" />;
 };
 
 export default MapboxMap;

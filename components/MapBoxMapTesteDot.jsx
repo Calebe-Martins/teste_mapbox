@@ -147,7 +147,7 @@ const MapboxMap = ({uid}) => {
 
   }, [center, radius]);
 
-  return <div ref={mapContainer} style={{ height: '90vh', width: '100vw'}} className="map-container" />;
+  return <div ref={mapContainer} style={{ height: '100vh', width: '100vw'}} className="map-container" />;
 };
 
 export default MapboxMap;
