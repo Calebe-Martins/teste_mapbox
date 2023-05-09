@@ -1,8 +1,8 @@
-import MapboxMapTesteDot from "../components/MapBoxMapTesteDot"
-import { useRouter } from "next/router";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
 import supabase from "../components/functions/supabase"
+import MapBoxMap from "../components/MapBoxMap"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useRouter } from "next/router";
+import React, { useState } from 'react';
 
 const Mapa = () => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const Mapa = () => {
   return (
     <>
       <div className="position-relative">
-          <MapboxMapTesteDot uid={uid} />
+          <MapBoxMap uid={uid} />
       </div>
       <div className="position-absolute top-0 start-0 p-3">
           <button className="btn btn-primary" onClick={handleShow}>
