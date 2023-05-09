@@ -15,7 +15,7 @@ const MapboxMap = () => {
   const [radius, setRadius] = useState(100); // raio inicial do círculo
   const [start, setStart] = useState([-49.24000240042355, -16.676058946542966]);
   const [end, setend] = useState([-49.2467092280161, -16.677949457902557])
-
+  
   useEffect(() => {
     // calculate route between start and end points
     const line = turf.lineString([start, end]);
@@ -70,6 +70,34 @@ const MapboxMap = () => {
 
     getGeofences()  
 
+    const fetchGeofence = async (uid) => {
+        const { data: promocao, error } = await supabase
+        .from('promocao')
+        .select('*')
+        .eq('uid', uid);
+
+        if (error) {
+            console.log(error)
+            return;
+        }
+
+        promocao.forEach((item) => {
+            const existingPromo = localStorage.getItem(`promo-${item.id}`);
+            if (!existingPromo) {
+                const localStorageValue = {
+                    id: item.id,
+                    uid: item.uid,
+                    titulo: item.descCurta,
+                    descLonga: item.descLonga,
+                    horaAtual: new Date().toISOString(),
+                    ativo: item.ativo,
+                };
+                // console.log(localStorageValue)
+                localStorage.setItem(`promo-${item.id}`, JSON.stringify(localStorageValue));
+            }
+        })
+    }
+
     const getInside = async ([userLocation]) => {
         // check if user is inside any geofence
         const { data: geofences, error } = await supabase
@@ -88,9 +116,11 @@ const MapboxMap = () => {
             });
 
             if (turf.booleanPointInPolygon(userLocation, circle)) {
-                console.log(`Usuario entrou na geofence uid: ${geofence.uid}`);
+                // console.log(`Usuario entrou na geofence uid: ${geofence.uid}`);
 
                 // Colocar no local storage aqui
+                // fetchGeofence(geofence.uid)
+
 
             }
         }

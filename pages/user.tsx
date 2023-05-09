@@ -1,21 +1,43 @@
 import MapboxMapTeste2 from "../components/MapboxMapTeste2";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-// import Slider from 'react-slick';
-
+import Slider from 'react-slick';
 
 export default function User() {
-    // const settings = {
-    //     dots: true,
-    //     infinite: true,
-    //     speed: 500,
-    //     slidesToShow: 3,
-    //     slidesToScroll: 3,
-    //     draggable: true,
-    // };
+  const settings = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 3,
+      draggable: true,
+  };
+
+  function getPromoDataFromLocalStorage() {
+    const promoData: Array<{ key: string; data: string }> = [];
+  
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("promo-")) {
+        const data = localStorage.getItem(key);
+  
+        if (data !== null) {
+          promoData.push({
+            key: key,
+            data: data,
+          });
+        }
+      }
+    });
+  
+    return promoData;
+  }
+  
+  // Exemplo de uso da função
+  const promoData = getPromoDataFromLocalStorage();
+  console.log(promoData);
 
   return (
     <>
@@ -26,52 +48,16 @@ export default function User() {
                 <MapboxMapTeste2 />
                 </div>
                 <div className="position-absolute top-0 start-0 p-3">
-                    <a href="/auth" className="btn btn-primary">
+                    <Link href="/auth" className="btn btn-primary">
                         Fazer login
-                    </a>
+                    </Link>
                 </div>
             </div>
             <div className="col-lg-6">
                 <div className="container" style={{backgroundColor: "#d3d3d3", height: "100vh"}}>
                     
-                {/* <Slider {...settings}>
-                    <div>
-                        <h3>Item 1</h3>
-                    </div>
-                    <div>
-                        <h3>Item 2</h3>
-                    </div>
-                    <div>
-                        <h3>Item 3</h3>
-                    </div>
-                    <div>
-                        <h3>Item 1</h3>
-                    </div>
-                    <div>
-                        <h3>Item 2</h3>
-                    </div>
-                    <div>
-                        <h3>Item 3</h3>
-                    </div>
-                    <div>
-                        <h3>Item 1</h3>
-                    </div>
-                    <div>
-                        <h3>Item 2</h3>
-                    </div>
-                    <div>
-                        <h3>Item 3</h3>
-                    </div>
-                    <div>
-                        <h3>Item 1</h3>
-                    </div>
-                    <div>
-                        <h3>Item 2</h3>
-                    </div>
-                    <div>
-                        <h3>Item 3</h3>
-                    </div>
-                </Slider> */}
+                <Slider {...settings}>
+                </Slider>
 
                 </div>
             </div>
