@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
-import supabase from "../components/functions/supabase"
+import supabase from "./functions/supabase"
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
-const MapboxMap = ({uid}) => {
+const MapBoxMap = ({uid}) => {
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -150,4 +150,4 @@ const MapboxMap = ({uid}) => {
   return <div ref={mapContainer} style={{ height: '100vh', width: '100vw'}} className="map-container" />;
 };
 
-export default MapboxMap;
+export default MapBoxMap;

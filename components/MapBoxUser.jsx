@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import supabase from "../components/functions/supabase"
+import supabase from "./functions/supabase"
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
 import mapboxgl from "mapbox-gl";
 
 mapboxgl.accessToken = "pk.eyJ1IjoibWFydGluc2NnIiwiYSI6ImNsY2YwMmQwZTNjaGwzcXFrZmV3Y3NwZGMifQ.U0tivVdJ4oHhnz5tUP6obg";
 
-const MapboxMap = () => {
+const MapBoxMapUser = () => {
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -66,9 +66,7 @@ const MapboxMap = () => {
                 });
             })
         }
-    }
-
-    getGeofences()  
+    }  
 
     const fetchGeofence = async (uid) => {
         const { data: promocao, error } = await supabase
@@ -119,7 +117,7 @@ const MapboxMap = () => {
                 // console.log(`Usuario entrou na geofence uid: ${geofence.uid}`);
 
                 // Colocar no local storage aqui
-                // fetchGeofence(geofence.uid)
+                fetchGeofence(geofence.uid)
 
 
             }
@@ -127,6 +125,7 @@ const MapboxMap = () => {
     }
 
     map.current.on("load", (e)=>{
+        getGeofences()
         // add user location dot
         navigator.geolocation.watchPosition(
         (position) => {
@@ -183,4 +182,4 @@ const MapboxMap = () => {
   return <div ref={mapContainer} style={{ height: '100vh', width: '50vw'}} className="map-container" />;
 };
 
-export default MapboxMap;
+export default MapBoxMapUser;

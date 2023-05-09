@@ -1,43 +1,9 @@
-import MapboxMapTeste2 from "../components/MapboxMapTeste2";
+import MapboxMapTeste2 from "../components/MapBoxUser";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Link from 'next/link';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import Slider from 'react-slick';
+import GetPromo from '../components/GetPromo'
 
 export default function User() {
-  const settings = {
-      dots: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 3,
-      slidesToScroll: 3,
-      draggable: true,
-  };
-
-  function getPromoDataFromLocalStorage() {
-    const promoData: Array<{ key: string; data: string }> = [];
-  
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("promo-")) {
-        const data = localStorage.getItem(key);
-  
-        if (data !== null) {
-          promoData.push({
-            key: key,
-            data: data,
-          });
-        }
-      }
-    });
-  
-    return promoData;
-  }
-  
-  // Exemplo de uso da função
-  const promoData = getPromoDataFromLocalStorage();
-  console.log(promoData);
 
   return (
     <>
@@ -55,10 +21,7 @@ export default function User() {
             </div>
             <div className="col-lg-6">
                 <div className="container" style={{backgroundColor: "#d3d3d3", height: "100vh"}}>
-                    
-                <Slider {...settings}>
-                </Slider>
-
+                    <GetPromo />
                 </div>
             </div>
         </div>
