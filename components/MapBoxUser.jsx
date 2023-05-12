@@ -72,12 +72,27 @@ const MapBoxMapUser = () => {
         const { data: promocao, error } = await supabase
         .from('promocao')
         .select('*')
-        .eq('uid', uid);
+        .eq('uid', uid)
+        .eq('ativo', true);
 
         if (error) {
             console.log(error)
             return;
         }
+
+        function getCurrentDateTime() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+          
+            const localDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+          
+            return localDateTime;
+        }        
 
         promocao.forEach((item) => {
             const existingPromo = localStorage.getItem(`promo-${item.id}`);
@@ -87,10 +102,9 @@ const MapBoxMapUser = () => {
                     uid: item.uid,
                     titulo: item.descCurta,
                     descLonga: item.descLonga,
-                    horaAtual: new Date().toISOString(),
+                    horaAtual: getCurrentDateTime(),
                     ativo: item.ativo,
                 };
-                // console.log(localStorageValue)
                 localStorage.setItem(`promo-${item.id}`, JSON.stringify(localStorageValue));
             }
         })
@@ -114,12 +128,7 @@ const MapBoxMapUser = () => {
             });
 
             if (turf.booleanPointInPolygon(userLocation, circle)) {
-                // console.log(`Usuario entrou na geofence uid: ${geofence.uid}`);
-
-                // Colocar no local storage aqui
                 fetchGeofence(geofence.uid)
-
-
             }
         }
     }

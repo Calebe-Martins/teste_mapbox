@@ -4,14 +4,24 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const ExampleComponent = () => {
   const [promoValues, setPromoValues] = useState([]);
 
-  function teste() {
+  function getGeofences() {
     const newPromoValues = [];
+    const currentTime = new Date().getTime();
     
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("promo-")) {
         const value = localStorage.getItem(key);
         if (value !== null) {
-          newPromoValues.push(JSON.parse(value));
+          const promo = JSON.parse(value);
+          const storedTime = new Date(promo.horaAtual).getTime();
+          const timeDifference = currentTime - storedTime;
+          const timeThreshold = 40 * 60 * 1000; // 3 minutes in milliseconds
+
+          if (timeDifference <= timeThreshold) {
+            newPromoValues.push(promo);
+          } else {
+            localStorage.removeItem(key);
+          }
         }
       }
     });
@@ -20,17 +30,20 @@ const ExampleComponent = () => {
   }
 
   useEffect(() => {
-    setInterval(teste, 1000)
-  }, []);
+    setInterval(getGeofences, 1000)
+  }, [promoValues]);
 
   return (
-    <div className="container row" style={{ backgroundColor: "#d3d3d3", display: "flex" }}>
-      {promoValues.map((promo, index) => (
-        <div key={index} className="card col-sm-6">
-          <div className="card-title">{promo.titulo}</div>
-          <div className="card-description">{promo.descLonga}</div>
-        </div>
-      ))}
+    <div className="" style={{ backgroundColor: "#d3d3d3", display: "flex" }}>
+        {promoValues.map((promo, index) => (
+          <div key={index} className="card col-lg-6">
+            <div className="card-header">{promo.titulo}</div>
+            <div className="card-body">
+              <p className="card-text">{promo.descLonga}</p>
+            </div>
+            <div className="card-footer text-muted" style={{fontSize: "10px"}}>{promo.horaAtual}</div>
+          </div>
+        ))}
     </div>
   );
 };
