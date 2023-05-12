@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const ExampleComponent = () => {
   const [promoValues, setPromoValues] = useState([]);
 
-  useEffect(() => {
+  function teste() {
     const newPromoValues = [];
     
     Object.keys(localStorage).forEach((key) => {
@@ -17,6 +17,10 @@ const ExampleComponent = () => {
     });
 
     setPromoValues(newPromoValues);
+  }
+
+  useEffect(() => {
+    setInterval(teste, 1000)
   }, []);
 
   return (

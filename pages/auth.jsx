@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useRouter } from 'next/router'
 import supabase from "../components/functions/supabase"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useRouter } from 'next/router'
+import { useState } from "react";
 
 export default function Auth() {
     const [activeTab, setActiveTab] = useState("login");
@@ -96,47 +97,92 @@ export default function Auth() {
 
     return(
     <>
+    <div className="container">
         <div id="login" className={`tab-content ${activeTab === "login" ? "active" : ""}`}>
-            {/* conteúdo da tab de login */}
-            <label htmlFor="">CPF</label>
-            <input type="text" id="cpf-login" placeholder="000.000.000-00" />
-            <label htmlFor="">Senha</label>
-            <input type="password" name="senha-login" id="senha-login" placeholder="********" />
-            {error && <p>{error}</p>}
-            <input type="button" value="Entrar" onClick={handleLogin} />
-            <button
-                className={`tab ${activeTab === "cadastro" ? "active" : ""}`}
-                onClick={() => handleTabClick("cadastro")}>Cadastre-se
-            </button>
+            <div className="card">
+                <div className="card-header">
+                    <h3>Login</h3>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        {/* conteúdo da tab de login */}
+                        <div className="col-lg-12 form-group">
+                            <label>CPF</label>
+                            <input className="form-control" type="text" id="cpf-login" placeholder="000.000.000-00" />
+                        </div>
+                        <div className="col-lg-12 form-group mt-3">
+                            <label>Senha</label>
+                            <input className="form-control" type="password" id="senha-login" placeholder="********" />
+                        </div>
+                        {error && <p>{error}</p>}
+                    </div>
+                    <div className="row mt-4">
+                        <div className="col-lg-12">
+                            <input className="btn btn-primary" type="button" value="Entrar" onClick={handleLogin} />
+                        </div>
+                    </div>
+                </div>
+                <div className="card-footer">
+                    <div className="row">
+                        <div className="col-lg-12 d-flex">
+                            <div>Não tem uma conta?&nbsp;</div>
+                            <a  className={`tab ${activeTab === "cadastro" ? "active" : ""}`}
+                                onClick={() => handleTabClick("cadastro")}>Cadastre-se
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="cadastro" className={`tab-content ${activeTab === "cadastro" ? "active" : ""}`}>
-            {/* conteúdo da tab de cadastro */}
-            <label htmlFor="">Nome</label>
-            <input type="text" id="nome" placeholder="Exemplo da Silva" />
-            <label htmlFor="">CPF</label>
-            <input type="text" id="cpf-cadastro" placeholder="000.000.000-00" />
-            <label htmlFor="">Senha</label>
-            <input type="password" name="senha-cadastro" id="senha-cadastro" placeholder="********" />
-            <label htmlFor="">Confirmar Senha</label>
-            <input type="password" name="senha-confirmar" id="confirmar-senha" placeholder="********" />
-            {error && <p>{error}</p>}
-            <input type="button" value="Cadastrar" onClick={handleCadastro} />
-            <button
-                className={`tab ${activeTab === "login" ? "active" : ""}`}
-                onClick={() => handleTabClick("login")}>Login
-            </button>
+            <div className="card">
+                <div className="card-header">
+                    <h3>Cadastro</h3>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        {/* conteúdo da tab de cadastro */}
+                        <div className="col-lg-12 form-group">
+                            <label>Nome</label>
+                            <input className="form-control" type="text" id="nome" placeholder="Exemplo da Silva" />
+                        </div>
+                        <div className="col-lg-12 form-group mt-3">
+                            <label>CPF</label>
+                            <input className="form-control" type="text" id="cpf-cadastro" placeholder="000.000.000-00" />
+                        </div>
+                        <div className="col-lg-12 form-group mt-3">
+                            <label>Senha</label>
+                            <input className="form-control" type="password" name="senha-cadastro" id="senha-cadastro" placeholder="********" />
+                        </div>
+                        <div className="col-lg-12 form-group mt-3">
+                            <label>Confirmar Senha</label>
+                            <input className="form-control" type="password" name="senha-confirmar" id="confirmar-senha" placeholder="********" />
+                        </div>
+                    </div>
+                    {error && <p>{error}</p>}
+                    <div className="row mt-4">
+                        <div className="col-lg-12">
+                            <input className="btn btn-primary" type="button" value="Cadastrar" onClick={handleCadastro} />
+                        </div>
+                    </div>
+                </div>
+                <div className="card-footer">
+                    <div className="row">
+                        <div className="col-lg-12 d-flex">
+                            <div>Já tem uma conta?&nbsp;</div>
+                            <a className={`tab ${activeTab === "login" ? "active" : ""}`}
+                                onClick={() => handleTabClick("login")}>Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
+    </div>
 
         <style jsx>{`
-            // .tab {
-            // background-color: #eee;
-            // border: none;
-            // padding: 10px;
-            // margin-right: 10px;
-            // cursor: pointer;
-            // }
-
             .tab.active {
             background-color: #ccc;
             }
