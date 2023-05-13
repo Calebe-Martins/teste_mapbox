@@ -34,7 +34,7 @@ const ExampleComponent = () => {
   }, [promoValues]);
 
   return (
-    <div className="" style={{ backgroundColor: "#d3d3d3", display: "flex" }}>
+    <div className="row g-0" style={{ backgroundColor: "#d3d3d3", display: "flex" }}>
         {promoValues.map((promo, index) => (
           <div key={index} className="card col-lg-6">
             <div className="card-header">{promo.titulo}</div>

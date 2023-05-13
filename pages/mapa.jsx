@@ -38,7 +38,7 @@ const Mapa = () => {
     getPromo()
     handleShow()
   }
-
+  
   async function handleCadastro() {
     const titulo = document.getElementById("descCurta").value;
     const desc = document.getElementById("descLonga").value;
@@ -56,7 +56,7 @@ const Mapa = () => {
     ])
     .then(() => {
       console.log("Promoção cadastrada com sucesso!");
-      handleClose
+      getPromo()
     })
     .catch((error) => {
       console.log(error)

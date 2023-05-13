@@ -86,7 +86,7 @@ export default function Auth() {
                 .from("usuario")
                 .insert({ nome, cpf, senha })
                 .then(() => {
-                    setSuccess("Usuário cadastrado com sucesso!");
+                    setError("Usuário cadastrado com sucesso!");
                 })
                 .catch((error) => {
                     setError("Erro ao cadastrar usuário!");
