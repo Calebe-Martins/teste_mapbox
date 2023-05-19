@@ -62,6 +62,8 @@ const Mapa = () => {
       console.log(error)
     });
 
+    titulo = ""
+    desc = ""
   }
 
   const handleDeleteItem = async (index) => {
