@@ -109,7 +109,7 @@ const ExampleComponent = () => {
       {/* Mapeia os valores promocionais e renderiza um card para cada um */}
       {promoValues.map((promo, index) => (
         <div key={index} className="card col-lg-6">
-          <div className="card-header">{promo.titulo}</div>
+          <div className="card-header"><h6>{promo.titulo}</h6></div>
           <div className="card-body">
             <p className="card-text">{promo.descLonga}</p>
           </div>

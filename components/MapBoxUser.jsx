@@ -281,110 +281,105 @@ const MapBoxMapUser = () => {
       if (error) {
         console.log(error)
         return;
+      }
+      
+      function getCurrentDateTime() {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+      
+        const localDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      
+        return localDateTime;
+      }
+      
+      promocao.forEach((item) => {
+        const existingPromo = localStorage.getItem(`promo-${item.id}`);
+        if (!existingPromo) {
+          const localStorageValue = {
+            id: item.id,
+            uid: item.uid,
+            titulo: item.descCurta,
+            descLonga: item.descLonga,
+            horaAtual: getCurrentDateTime(),
+            ativo: item.ativo,
+          };
+          localStorage.setItem(`promo-${item.id}`, JSON.stringify(localStorageValue));
         }
-        function getCurrentDateTime() {
-            const currentDate = new Date();
-            const year = currentDate.getFullYear();
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const day = String(currentDate.getDate()).padStart(2, '0');
-            const hours = String(currentDate.getHours()).padStart(2, '0');
-            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-            const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+      })
+    }
         
-            const localDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        
-            return localDateTime;
-          }
-        
-          promocao.forEach((item) => {
-            const existingPromo = localStorage.getItem(`promo-${item.id}`);
-            if (!existingPromo) {
-              const localStorageValue = {
-                id: item.id,
-                uid: item.uid,
-                titulo: item.descCurta,
-                descLonga: item.descLonga,
-                horaAtual: getCurrentDateTime(),
-                ativo: item.ativo,
-              };
-              localStorage.setItem(`promo-${item.id}`, JSON.stringify(localStorageValue));
-            }
-          })
+    // Função para verificar se o usuário está dentro de alguma área de geofencing
+    const getInside = async ([userLocation]) => {
+      const { data: geofences, error } = await supabase
+        .from('geofences')
+        .select('*');
+      
+      if (error) {
+        console.error(error);
+        return;
+      }
+      
+      for (const geofence of geofences) {
+        const circle = turf.circle([geofence.lng, geofence.lat], radius, {
+          steps: 64,
+          units: "meters",
+        });
+      
+        if (turf.booleanPointInPolygon(userLocation, circle)) {
+          fetchGeofence(geofence.uid)
         }
-        
-        // Função para verificar se o usuário está dentro de alguma área de geofencing
-        const getInside = async ([userLocation]) => {
-          const { data: geofences, error } = await supabase
-            .from('geofences')
-            .select('*');
-        
-          if (error) {
-            console.error(error);
-            return;
-          }
-        
-          for (const geofence of geofences) {
-            const circle = turf.circle([geofence.lng, geofence.lat], radius, {
-              steps: 64,
-              units: "meters",
-            });
-        
-            if (turf.booleanPointInPolygon(userLocation, circle)) {
-              fetchGeofence(geofence.uid)
-            }
-          }
-        }
-        
-        // Função de retorno quando o mapa é carregado
-        map.current.on("load", (e) => {
-          getGeofences();
-          // Adiciona o ponto de localização do usuário
-          navigator.geolocation.watchPosition(
-            (position) => {
-              if (!userLocationDot.current) {
-                // Cria o ponto de localização do usuário
-                userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
-                  .setLngLat(start)
-                  .addTo(map.current);
-        
-                let i = 0;
-                const interval = setInterval(() => {
-                  if (i >= route.length) {
-                    clearInterval(interval);
-                    return;
-                  }
-        
-                  const coords = route[i].geometry.coordinates;
-                  getInside(coords)
-                  userLocationDot.current.setLngLat(coords[1]);
-        
-                  i++;
-                }, 1000);
-        
-                // Função de limpeza
-                return () => clearInterval(interval);
-        
-              } else {
-                // Atualiza o ponto de localização do usuário
-                // userLocationDot.current.setLngLat([longitude, latitude]);
-                // Atualiza o centro do mapa com a localização do usuário
-                // map.current.setCenter(start);
-        
-                // Verificar se o usuário já passou do tempo ao andar
+      }
+    }
+    
+    // Função de retorno quando o mapa é carregado
+    map.current.on("load", (e) => {
+      getGeofences();
+      // Adiciona o ponto de localização do usuário
+      navigator.geolocation.watchPosition(
+        (position) => {
+          if (!userLocationDot.current) {
+            // Cria o ponto de localização do usuário
+            userLocationDot.current = new mapboxgl.Marker({ color: "#00704A" })
+              .setLngLat(start)
+              .addTo(map.current);
+    
+            let i = 0;
+            const interval = setInterval(() => {
+              if (i >= route.length) {
+                clearInterval(interval);
+                return;
               }
-        
-            },
-            (error) => {
-              console.error(error);
-            },
-            { enableHighAccuracy: true, maximumAge: 0 }
-          );
-        })
-    }, []);
+    
+              const coords = route[i].geometry.coordinates;
+              getInside(coords)
+              userLocationDot.current.setLngLat(coords[1]);
+    
+              i++;
+            }, 1000);
+    
+            // Função de limpeza
+            return () => clearInterval(interval);
+    
+          } else {
+            // Atualiza o ponto de localização do usuário
+            // userLocationDot.current.setLngLat([longitude, latitude]);
+          }
+    
+        },
+        (error) => {
+          console.error(error);
+        },
+        { enableHighAccuracy: true, maximumAge: 0 }
+      );
+    })
+  }, []);
 
-    return <div ref={mapContainer} style={{ height: '100vh', width: '50vw' }} className="map-container" />;
+  return <div ref={mapContainer} style={{ height: '100vh', width: '100%' }} className="map-container" />;
 };
     
 export default MapBoxMapUser;
-    
-            

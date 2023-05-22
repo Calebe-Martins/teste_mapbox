@@ -57,13 +57,13 @@ const Mapa = () => {
     .then(() => {
       console.log("Promoção cadastrada com sucesso!");
       getPromo()
+
+      document.getElementById("descCurta").value = ""
+      document.getElementById("descLonga").value = ""
     })
     .catch((error) => {
       console.log(error)
     });
-
-    titulo = ""
-    desc = ""
   }
 
   const handleDeleteItem = async (index) => {
@@ -111,10 +111,10 @@ const Mapa = () => {
                 </div>
                 <div className="col-lg-12 form-group mt-3">
                   <label>Descrição</label>
-                  <input className="form-control" type="text" id="descLonga" />
+                  <textarea className="form-control" type="text" id="descLonga" />
                 </div>
               </div>
-              <div className="mt-4">
+              <div className="mt-4" style={{ height: '200px', overflow: 'auto' }}>
                 <ul className="list-group">
                   {/* Usando a função map para renderizar cada item em um loop */}
                   {items.map((item, index) => (

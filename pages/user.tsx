@@ -10,8 +10,8 @@ export default function User() {
     <div className="container-fluid">
         <div className="row">
             <div className="col-lg-6">
-                <div className="position-relative">
-                <MapBoxUser />
+                <div>
+                    <MapBoxUser />
                 </div>
                 <div className="position-absolute top-0 start-0 p-3">
                     <Link href="/auth" className="btn btn-primary">
@@ -20,7 +20,7 @@ export default function User() {
                 </div>
             </div>
             <div className="col-lg-6">
-                <div className="container" style={{backgroundColor: "#d3d3d3", height: "100vh"}}>
+                <div className="container" style={{backgroundColor: "#d3d3d3", height: "100vh" , overflow: "auto"}}>
                     <GetPromo />
                 </div>
             </div>
